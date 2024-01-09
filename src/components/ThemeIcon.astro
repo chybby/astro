@@ -37,11 +37,19 @@ type Props = Record<string, never>;
     </svg>
 </button>
 
-<!-- Avoid flashing the light theme on page reload. -->
+<!-- Avoid flashing the light theme on page reload/navigation. -->
 <script is:inline>
-  localStorage.theme === 'dark'
-  ? document.documentElement.classList.add("dark")
-  : document.documentElement.classList.add("light");
+  function setDarkMode(document) {
+    localStorage.theme === 'dark'
+      ? document.documentElement.classList.add("dark")
+      : document.documentElement.classList.add("light");
+  }
+
+  setDarkMode(document);
+
+  document.addEventListener('astro:before-swap', ev => {
+    setDarkMode(ev.newDocument);
+  });
 </script>
 
 <script>
@@ -73,14 +81,5 @@ type Props = Record<string, never>;
     }
 
     document.getElementById("themeToggle")!.addEventListener("click", handleToggleClick);
-  });
-</script>
-
-<!-- Avoid flashing the light theme on navigation. -->
-<script>
-  document.addEventListener('astro:after-swap', () => {
-    localStorage.theme === 'dark'
-    ? document.documentElement.classList.add("dark")
-    : document.documentElement.classList.add("light");
   });
 </script>
